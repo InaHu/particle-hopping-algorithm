@@ -49,16 +49,17 @@ N1.Lambda_tip_max = 1;
 N2.Lambda_tip_max = 1;
 
 % Initial influx- and outflux values in all neurites
-no_noflux = 1;                          % Set to 0 to have no flux for each Neurite
-N1.alpha_a = no_noflux*1;
-N1.alpha_r = no_noflux*1;
-N2.alpha_a = no_noflux*1;
-N2.alpha_r = no_noflux*1;
+no_noflux_1 = 1;                          % Set to 0 to have no flux in neurite 1
+no_noflux_2 = 1;                          % Set to 0 to have no flux in neurite 2
+N1.alpha_a = no_noflux_1*1;
+N1.alpha_r = no_noflux_1*1;
+N2.alpha_a = no_noflux_2*1;
+N2.alpha_r = no_noflux_2*1;
 
-N1.beta_a = no_noflux*1;
-N1.beta_r = no_noflux*0.1;
-N2.beta_a = no_noflux*1;
-N2.beta_r = no_noflux*0.1;
+N1.beta_a = no_noflux_1*1;
+N1.beta_r = no_noflux_1*0.1;
+N2.beta_a = no_noflux_2*1;
+N2.beta_r = no_noflux_2*0.1;
 
 % Further parameters (diffusion constants and potentials)
 N1.eps_a = 0.05;
