@@ -30,7 +30,7 @@ N1.x = linspace(0,N1.L,n*N1.L)';
 N2.x = linspace(0,N2.L,n*N2.L)';            
 
 % Time discretisation
-T = 50;                                  % End time
+T = 100;                                  % End time
 m = T*10000;
 dt = T/m;
 N1.dt = dt;   
@@ -295,8 +295,9 @@ for i = 1:m
             + N2.beta_a*N2a1(end)*(N2.Lambda_tip_max - N2.Lambda_tip));                 % Vesicles entering pool Neuron 2
     
     % Calculate total mass
-    Development_MassWholeSystem(i) = ((N1.Lambda_som + N1.Lambda_tip +  N2.Lambda_tip ... 
-        + sum(N1r1(:)) + sum(N1a1(:)) + sum(N2r1(:)) + sum(N2a1(:))))/(N1.L + N2.L + 3); 
+    Development_MassWholeSystem(i) = (N1.Lambda_som/N1.Lambda_som_max*1.4  + N1.Lambda_tip/N1.Lambda_tip_max*0.02  +  N2.Lambda_tip/N2.Lambda_tip_max*0.02)  ... 
+        + (trapz(N1r1(:)) + trapz(N1a1(:)))*N1.dx ...
+        + (trapz(N2r1(:)) + trapz(N2a1(:)))*N2.dx; 
     % Müsste hier der Wert im Pool nicht auf noch durch n geteilt werden?
     
     % Calculate entropy
@@ -313,10 +314,10 @@ end
 ParticlesN1 = zeros(2,1);
 ParticlesN2 = ParticlesN1;
 
-ParticlesN1(1) = sum(N1a1(:))/(N1.L*n);
-ParticlesN1(2) = sum(N1r1(:))/(N1.L*n);
-ParticlesN2(1) = sum(N2a1(:))/(N2.L*n);
-ParticlesN2(2) = sum(N2r1(:))/(N2.L*n);
+ParticlesN1(1) = trapz(N1a1(:))*N1.dx;
+ParticlesN1(2) = trapz(N1r1(:))*N1.dx;
+ParticlesN2(1) = trapz(N2a1(:))*N2.dx;
+ParticlesN2(2) = trapz(N2r1(:))*N2.dx;
 
 plotN1a1 = subplot(1,4,1);
 bar(ParticlesN1(1));
@@ -417,7 +418,20 @@ set(xl,'FontSize',20);
 set(yl,'FontSize',20);
 set(gca,'FontSize',17,'FontWeight','bold');
 
-%saveas(gcf, 'Images/DevelopmentEntropy2B', 'pdf');
-disp('A figure of the Development of the entropy was printed.')
+% Plot Development of Entropy in the Whole System
+figure(5);
+plot(tt, log(Development_Entropy));
+l = title('Relative Entropy');
+xl = xlabel('Time $t$');
+yl = ylabel('Logarithm of Total Entropy');
+set(groot, 'DefaultTextInterpreter', 'latex');
+set(groot, 'DefaultAxesTickLabelInterpreter', 'latex');
+set(groot, 'DefaultAxesFontName', 'latex');
+set(groot, 'DefaultLegendInterpreter', 'latex');
+set(l,'FontSize',20);
+set(xl,'FontSize',20);
+set(yl,'FontSize',20);
+set(gca,'FontSize',17,'FontWeight','bold');
+
 
 toc
