@@ -30,7 +30,7 @@ N1.x = linspace(0,N1.L,n*N1.L)';
 N2.x = linspace(0,N2.L,n*N2.L)';            
 
 % Time discretisation
-T = 100;                                  % End time
+T = 20;                                  % End time
 m = T*10000;
 dt = T/m;
 N1.dt = dt;   
@@ -296,14 +296,14 @@ for i = 1:m
     
     % Calculate total mass
     Development_MassWholeSystem(i) = (N1.Lambda_som/N1.Lambda_som_max*1.4  + N1.Lambda_tip/N1.Lambda_tip_max*0.02  +  N2.Lambda_tip/N2.Lambda_tip_max*0.02)  ... 
-        + (trapz(N1r1(:)) + trapz(N1a1(:)))*N1.dx ...
-        + (trapz(N2r1(:)) + trapz(N2a1(:)))*N2.dx; 
+        + (sum(N1r1(:)) + sum(N1a1(:)))*N1.dx ...
+        + (sum(N2r1(:)) + sum(N2a1(:)))*N2.dx
     % Müsste hier der Wert im Pool nicht auf noch durch n geteilt werden?
     
     % Calculate entropy
     eN1 = N1a1.*log(N1a1./N1.a_infinity) + N1r1.*log(N1r1./N1.r_infinity) + (1 - N1p1).*log((1 - N1p1)./(1-N1.a_infinity - N1.r_infinity)) ;
     eN2 = N2a1.*log(N2a1./N2.a_infinity) + N2r1.*log(N2r1./N2.r_infinity) + (1 - N2p1).*log((1 - N2p1)./(1-N2.a_infinity - N2.r_infinity)) ;
-    Development_Entropy(i) = N1.dx*trapz(eN1) + N2.dx*trapz(eN2)  ...
+    Development_Entropy(i) = N1.dx*sum(eN1) + N2.dx*sum(eN2)  ...
         + N1.Lambda_som*log(N1.Lambda_som/N1.Lambda_som_infinity) ...
         + N1.Lambda_tip*log(N1.Lambda_tip/N1.Lambda_tip_infinity) ...
         + N2.Lambda_tip*log(N2.Lambda_tip/N2.Lambda_tip_infinity);
@@ -314,10 +314,10 @@ end
 ParticlesN1 = zeros(2,1);
 ParticlesN2 = ParticlesN1;
 
-ParticlesN1(1) = trapz(N1a1(:))*N1.dx;
-ParticlesN1(2) = trapz(N1r1(:))*N1.dx;
-ParticlesN2(1) = trapz(N2a1(:))*N2.dx;
-ParticlesN2(2) = trapz(N2r1(:))*N2.dx;
+ParticlesN1(1) = sum(N1a1(:))*N1.dx;
+ParticlesN1(2) = sum(N1r1(:))*N1.dx;
+ParticlesN2(1) = sum(N2a1(:))*N2.dx;
+ParticlesN2(2) = sum(N2r1(:))*N2.dx;
 
 plotN1a1 = subplot(1,4,1);
 bar(ParticlesN1(1));
