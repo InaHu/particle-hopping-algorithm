@@ -8,7 +8,7 @@ function [a1, r1, j] = UpdateConcentrationParticleHopping(N)
     H_a = (N.Scaling_Diffusion*N.dt)/(2*C_a*N.dx^2);
     H_r = (N.Scaling_Diffusion*N.dt)/(2*C_r*N.dx^2);
     
-    BoundaryScaling = N.typicalTime/N.typicalLength;
+    BoundaryScaling = 1/N.Additional_Scaling_Boundary;
     
     % Initialse Vectors for new concentrations
     a1 = zeros(length(N.a0),1); 
