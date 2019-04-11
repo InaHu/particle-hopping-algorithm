@@ -208,17 +208,17 @@ for i = 1:(m*2)
       
      % Update Concentration in Pools (Use same scheme as in the domains)
     N1.Lambda_som = N1.Lambda_som ...                               % Old concentration
-        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx^2)*(N1.beta_r*(N1.Lambda_som_max - N1.Lambda_som)*(N1r1(1)) ...      % Retrograte entering from Neuron 1
+        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx)*(N1.beta_r*(N1.Lambda_som_max - N1.Lambda_som)*(N1r1(1)) ...      % Retrograte entering from Neuron 1
             + N2.beta_r*(N2.Lambda_som_max - N2.Lambda_som)*(N2r1(1)) ...               % Retrograte entering from Neuron 2
             - N1.alpha_a*N1.Lambda_som*(1-N1r1(1)-N1a1(1)) ...                          % Anterograde existing pool into Neuron 1 
             - N2.alpha_a*N2.Lambda_som*(1-N2r1(1)-N2a1(1))); ...                        % Anterograde existing pool into Neuron 2
             
     N2.Lambda_som = N1.Lambda_som;
     N1.Lambda_tip = N1.Lambda_tip ...                                           % Tip of Neuron 1
-        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx^2)*(- N1.alpha_r*N1.Lambda_tip*(1-N1r1(end)-N1a1(end)) ...                 % Vesicles exiting pool Neuron 1
+        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx)*(- N1.alpha_r*N1.Lambda_tip*(1-N1r1(end)-N1a1(end)) ...                 % Vesicles exiting pool Neuron 1
             + N1.beta_a*N1a1(end)*(N1.Lambda_tip_max - N1.Lambda_tip));                % Vesicles entering pool Neuron 1
     N2.Lambda_tip = N2.Lambda_tip ...                                           % Tip of Neuron 2
-        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx^2)*(- N2.alpha_r*N2.Lambda_tip*(1-N2r1(end)-N2a1(end)) ...                 % Vesicles exiting pool Neuron 2
+        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx)*(- N2.alpha_r*N2.Lambda_tip*(1-N2r1(end)-N2a1(end)) ...                 % Vesicles exiting pool Neuron 2
             + N2.beta_a*N2a1(end)*(N2.Lambda_tip_max - N2.Lambda_tip));  
         
     %disp(['sum(N1r1(:) = '  num2str(sum(N1r1(:))) ', sum(N1a1(:)) = ' num2str(sum(N1a1(:))) ', Lambda_som = ' num2str(N1.Lambda_som) ', N1.Lambda_tip = ' num2str(N1.Lambda_tip)]);
@@ -295,17 +295,17 @@ for i = 1:m
     
     % Update Concentration in Pools 
     N1.Lambda_som = N1.Lambda_som ...                               % Old concentration
-        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx^2)*(N1.beta_r*(N1.Lambda_som_max - N1.Lambda_som)*(N1r1(1)) ...      % Retrograte entering from Neuron 1
+        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx)*(N1.beta_r*(N1.Lambda_som_max - N1.Lambda_som)*(N1r1(1)) ...      % Retrograte entering from Neuron 1
             + N2.beta_r*(N2.Lambda_som_max - N2.Lambda_som)*(N2r1(1)) ...               % Retrograte entering from Neuron 2
             - N1.alpha_a*N1.Lambda_som*(1-N1r1(1)-N1a1(1)) ...                          % Anterograde existing pool into Neuron 1 
             - N2.alpha_a*N2.Lambda_som*(1-N2r1(1)-N2a1(1))); ...                        % Anterograde existing pool into Neuron 2
             
     N2.Lambda_som = N1.Lambda_som;
     N1.Lambda_tip = N1.Lambda_tip ...                                           % Tip of Neuron 1
-        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx^2)*(- N1.alpha_r*N1.Lambda_tip*(1-N1r1(end)-N1a1(end)) ...                 % Vesicles exiting pool Neuron 1
+        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx)*(- N1.alpha_r*N1.Lambda_tip*(1-N1r1(end)-N1a1(end)) ...                 % Vesicles exiting pool Neuron 1
             + N1.beta_a*N1a1(end)*(N1.Lambda_tip_max - N1.Lambda_tip));                % Vesicles entering pool Neuron 1
     N2.Lambda_tip = N2.Lambda_tip ...                                           % Tip of Neuron 2
-        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx^2)*(- N2.alpha_r*N2.Lambda_tip*(1-N2r1(end)-N2a1(end)) ...                 % Vesicles exiting pool Neuron 2
+        + (1/N1.Scaling_Pools)*(N1.dt/N1.dx)*(- N2.alpha_r*N2.Lambda_tip*(1-N2r1(end)-N2a1(end)) ...                 % Vesicles exiting pool Neuron 2
             + N2.beta_a*N2a1(end)*(N2.Lambda_tip_max - N2.Lambda_tip));  
 
     % Calculate total mass
