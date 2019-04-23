@@ -14,8 +14,8 @@ function [a1, r1, j] = UpdateConcentrationParticleHopping(N)
     r1 = zeros(length(N.r0),1);
     
     %% Solve in the Domain
-    H_a = (N.typicalTime*N.typicalDiffusion)/(2*N.typicalLength*C_a*N.dx^2);
-    H_r = (N.typicalTime*N.typicalDiffusion)/(2*N.typicalLength*C_a*N.dx^2);
+    H_a = (N.typicalTime*N.typicalDiffusion)/(2*N.typicalLength^2*C_a*N.dx^2);
+    H_r = (N.typicalTime*N.typicalDiffusion)/(2*N.typicalLength^2*C_a*N.dx^2);
     
     % Calculate new concentrations
     G = - N.a0(2:end-1).*(1-N.p0(1:end-2)).*exp(- tildeC*N.typicalPotential*C_a*(N.V_a(2:end-1)-N.V_a(1:end-2)));          % Probability that an ANT-particle jumps away to the left
