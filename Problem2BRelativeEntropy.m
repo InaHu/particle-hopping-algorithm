@@ -202,7 +202,7 @@ tic;
 %     N2.a0 = N2a1;
 %     N2.r0 = N2r1;
 %     N2p1 = N2a1 + N2r1;
-%       
+% %       
 %     % Update Concentration in Pools 
 %     N1.Lambda_som = N1.Lambda_som ...                               % Old concentration
 %         + N1.dt*K*(N1.beta_r*(1 - N1.Lambda_som/N1.Lambda_som_max)*(N1r1(1)) ...      % Retrograte entering from Neuron 1
@@ -215,9 +215,9 @@ tic;
 %         + N1.dt*K*(- N1.alpha_r*(N1.Lambda_tip/ N1.Lambda_tip_max)*(1-N1r1(end)-N1a1(end)) ...                 % Vesicles exiting pool Neuron 1
 %             + N1.beta_a*N1a1(end)*(1 - N1.Lambda_tip/N1.Lambda_tip_max ));                % Vesicles entering pool Neuron 1
 %     N2.Lambda_tip = N2.Lambda_tip ...                                           % Tip of Neuron 2
-%         + N1.dt*K*(- N2.alpha_r*(N2.Lambda_tip/N1.Lambda_tip_max)*(1-N2r1(end)-N2a1(end)) ...                 % Vesicles exiting pool Neuron 2
-%             + N2.beta_a*N2a1(end)*(1 - N2.Lambda_tip/N2.Lambda_tip_max));  
-%         
+%         + N1.dt*K*(- N2.alpha_r*(N2.Lambda_tip/N2.Lambda_tip_max)*(1-N2r1(end)-N2a1(end)) ...                 % Vesicles exiting pool Neuron 2
+%             + N2.beta_a*N2a1(end)*(1 - N2.Lambda_tip/N2.Lambda_tip_max));
+
 %     %disp(['sum(N1r1(:) = '  num2str(sum(N1r1(:))) ', sum(N1a1(:)) = ' num2str(sum(N1a1(:))) ', Lambda_som = ' num2str(N1.Lambda_som) ', N1.Lambda_tip = ' num2str(N1.Lambda_tip)]);
 %     %disp(['What leaves soma = ' num2str(- N1.Scaling_Pools*N1.dt*N1.alpha_a*N1.Lambda_som*(1-N1old.r0(1)-N1old.a0(1))) ', (1-\rho)= ' num2str(1-N1old.r0(1)-N1old.a0(1))]);
 % end
@@ -302,7 +302,7 @@ for i = 1:m
         + N1.dt*K*(- N1.alpha_r*(N1.Lambda_tip/ N1.Lambda_tip_max)*(1-N1r1(end)-N1a1(end)) ...                 % Vesicles exiting pool Neuron 1
             + N1.beta_a*N1a1(end)*(1 - N1.Lambda_tip/N1.Lambda_tip_max ));                % Vesicles entering pool Neuron 1
     N2.Lambda_tip = N2.Lambda_tip ...                                           % Tip of Neuron 2
-        + N1.dt*K*(- N2.alpha_r*(N2.Lambda_tip/N1.Lambda_tip_max)*(1-N2r1(end)-N2a1(end)) ...                 % Vesicles exiting pool Neuron 2
+        + N1.dt*K*(- N2.alpha_r*(N2.Lambda_tip/N2.Lambda_tip_max)*(1-N2r1(end)-N2a1(end)) ...                 % Vesicles exiting pool Neuron 2
             + N2.beta_a*N2a1(end)*(1 - N2.Lambda_tip/N2.Lambda_tip_max));  
 
 %     % Calculate total mass
