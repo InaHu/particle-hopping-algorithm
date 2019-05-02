@@ -28,14 +28,14 @@ N2 = N1;
 % Space discretisation
 n = 400;
 N1.L = 1;
-N2.L = 0.9;
+N2.L = 0.3;
 N1.dx = 1/n;                                % or h
 N2.dx = 1/n;
 N1.x = linspace(0,N1.L,n*N1.L)';            
 N2.x = linspace(0,N2.L,n*N2.L)';            
 
 % Time discretisation
-T = 5;                                     % End time
+T = 20;                                     % End time
 m = T*10000;
 dt = T/m;
 N1.dt = dt;   
@@ -43,7 +43,7 @@ N2.dt = dt;
 tt = linspace(0,T,ceil(T/N1.dt))';  
 
 % Load initial pool Cconcentrations and define their maximum sizes;
-N1.Lambda_som = 1.4;                        % Total Mass of Vesicles in the Soma
+N1.Lambda_som = 1.0;                        % Total Mass of Vesicles in the Soma
 N2.Lambda_som = N1.Lambda_som;
 N1.Lambda_tip = 0.001;                          % Total Mass of Vesicles in the growth cone of N1
 N2.Lambda_tip = 0.001;                          % Total Mass of Vesicles in the growth cone of N2
@@ -59,16 +59,16 @@ SaveN2Lambda_tip = N2.Lambda_tip;
 
 % Initial influx- and outflux values in all neurites
 no_noflux_1 = 1;                          % Set to 0 to have no flux in neurite 1       %Wenn man einen der beiden auf null stellt und den anderen nicht, funktioniert es nicht
-no_noflux_2 = 0;                          % Set to 0 to have no flux in neurite 2
-N1.alpha_a = no_noflux_1*8;               
-N1.alpha_r = no_noflux_1*5.5;         
-N2.alpha_a = no_noflux_2*8;
-N2.alpha_r = no_noflux_2*5.5;
+no_noflux_2 = 1;                          % Set to 0 to have no flux in neurite 2
+N1.alpha_a = no_noflux_1*0.8;               
+N1.alpha_r = no_noflux_1*0.8;         
+N2.alpha_a = no_noflux_2*0.8;
+N2.alpha_r = no_noflux_2*0.8;
 
-N1.beta_a = no_noflux_1*8;
-N1.beta_r = no_noflux_1*5.5;
-N2.beta_a = no_noflux_2*8;
-N2.beta_r = no_noflux_2*5.5;
+N1.beta_a = no_noflux_1*15;
+N1.beta_r = no_noflux_1*15;
+N2.beta_a = no_noflux_2*15;
+N2.beta_r = no_noflux_2*15;
 
 % Further parameters (diffusion constants and potentials)
 N1.eps_a = 0.05;
