@@ -19,8 +19,12 @@ N1.typicalConcentration = 15;
 % Calculate Scaling Parameters
 lambda_in = (N1.typicalTime*N1.typicalInflux)/(N1.typicalLength*N1.typicalConcentration);
 lambda_out = (N1.typicalTime*N1.typicalOutflux)/(N1.typicalLength);
+lambda_eps = N1.typicalTime*N1.typicalDiffusion/(N1.typicalLength^2);
+lambda_V = N1.typicalTime*N1.typicalPotential/(N1.typicalLength^2);
 N1.lambda_in = lambda_in;
 N1.lambda_out = lambda_out;
+N1.lambda_eps = lambda_eps;
+N1.lambda_V = lambda_V;
 
 % Second neurite hat the same scaling parameters
 N2 = N1;
@@ -255,11 +259,13 @@ N2.r0 = SaveN2r0;
 
 for i = 1:m
     % Update Concentration in Neurons
+    N1old = N1;
     [N1a1, N1r1, ~] = UpdateConcentrationParticleHopping(N1);    
     N1.a0 = N1a1;
     N1.r0 = N1r1;
     N1p1 = N1a1 + N1r1;
 	
+    N2old = N2;
     [N2a1, N2r1, ~] = UpdateConcentrationParticleHopping(N2);    
     N2.a0 = N2a1;
     N2.r0 = N2r1;
@@ -297,29 +303,31 @@ for i = 1:m
     
     % Update Concentration in Pools 
     N1.Lambda_som = N1.Lambda_som ...                               % Old concentration
-        + N1.dt/(2*N1.dx)*(lambda_out*N1.beta_r*(1 - N1.Lambda_som/N1.Lambda_som_max)*(N1r1(1)) ...      % Retrograte entering from Neuron 1
-            + lambda_out*N2.beta_r*(1 - N2.Lambda_som/N2.Lambda_som_max)*(N2r1(1)) ...               % Retrograte entering from Neuron 2
-            - lambda_in*N1.alpha_a*(N1.Lambda_som/N1.Lambda_som_max)*(1-N1r1(1)-N1a1(1)) ...                          % Anterograde existing pool into Neuron 1 
-            - lambda_in*N2.alpha_a*(N2.Lambda_som/N2.Lambda_som_max)*(1-N2r1(1)-N2a1(1)));                     % Anterograde existing pool into Neuron 2
+        + N1.dt/(2)*(lambda_out*N1.beta_r*(1 - N1.Lambda_som/N1.Lambda_som_max)*(N1old.r0(1)) ...      % Retrograte entering from Neuron 1
+            + lambda_out*N2.beta_r*(1 - N2.Lambda_som/N2.Lambda_som_max)*(N2old.r0(1)) ...               % Retrograte entering from Neuron 2
+            - lambda_in*N1.alpha_a*(N1.Lambda_som/N1.Lambda_som_max)*(1-N1old.r0(1)-N1old.a0(1)) ...                          % Anterograde existing pool into Neuron 1 
+            - lambda_in*N2.alpha_a*(N2.Lambda_som/N2.Lambda_som_max)*(1-N2old.r0(1)-N2old.a0(1)));                     % Anterograde existing pool into Neuron 2
             
     N2.Lambda_som = N1.Lambda_som;
     N1.Lambda_tip = N1.Lambda_tip ...                                           % Tip of Neuron 1
-        + N1.dt/(2*N1.dx)*(- lambda_in*N1.alpha_r*(N1.Lambda_tip/ N1.Lambda_tip_max)*(1-N1r1(end)-N1a1(end)) ...                 % Vesicles exiting pool Neuron 1
-            + lambda_out*N1.beta_a*N1a1(end)*(1 - N1.Lambda_tip/N1.Lambda_tip_max ));                % Vesicles entering pool Neuron 1
+        + N1.dt/(2)*(- lambda_in*N1.alpha_r*(N1.Lambda_tip/ N1.Lambda_tip_max)*(1-N1old.r0(end)-N1old.a0(end)) ...                 % Vesicles exiting pool Neuron 1
+            + lambda_out*N1.beta_a*N1old.a0(end)*(1 - N1.Lambda_tip/N1.Lambda_tip_max )); % Vesicles entering pool Neuron 1
     N2.Lambda_tip = N2.Lambda_tip ...                                           % Tip of Neuron 2
-        + N2.dt/(2*N2.dx)*(- lambda_in*N2.alpha_r*(N2.Lambda_tip/N2.Lambda_tip_max)*(1-N2r1(end)-N2a1(end)) ...                 % Vesicles exiting pool Neuron 2
-            + lambda_out*N2.beta_a*N2a1(end)*(1 - N2.Lambda_tip/N2.Lambda_tip_max));  
+        + N2.dt/(2)*(- lambda_in*N2.alpha_r*(N2.Lambda_tip/N2.Lambda_tip_max)*(1-N2old.r0(end)-N2old.a0(end)) ...                 % Vesicles exiting pool Neuron 2
+            + lambda_out*N2.beta_a*N2old.a0(end)*(1 - N2.Lambda_tip/N2.Lambda_tip_max));  
 
     % Calculate total mass
     Development_MassWholeSystem(i) = N1.Lambda_som + N1.Lambda_tip + N2.Lambda_tip  ... 
-        + (sum(N1r1(:)) + sum(N1a1(:)) + sum(N2r1(:)) + sum(N2a1(:))); %*N2.dx; %!!!!!!!!!!
+        + N2.dx*(sum(N1r1(:)) + sum(N1a1(:)) + sum(N2r1(:)) + sum(N2a1(:))); %*N2.dx; %!!!!!!!!!!
     
+    N1.Lambda_som + N1.Lambda_tip + N2.Lambda_tip  ... 
+        + N2.dx*(sum(N1r1(:)) + sum(N1a1(:)) + sum(N2r1(:)) + sum(N2a1(:)))
     % Calculate entropy
-    eN1 = N1a1.*log(N1a1./N1.a_infinity) + N1r1.*log(N1r1./N1.r_infinity) + (1 - N1p1).*log((1 - N1p1)./(1-N1.a_infinity - N1.r_infinity)) ;
-    eN2 = N2a1.*log(N2a1./N2.a_infinity) + N2r1.*log(N2r1./N2.r_infinity) + (1 - N2p1).*log((1 - N2p1)./(1-N2.a_infinity - N2.r_infinity)) ;
-    Development_Entropy(i) = N1.dx*sum(eN1) + N2.dx*sum(eN2)  ...
-        + N1.Lambda_som*log(N1.Lambda_som/N1.Lambda_som_infinity) ...
-        + N1.Lambda_tip*log(N1.Lambda_tip/N1.Lambda_tip_infinity); ...
+%     eN1 = N1a1.*log(N1a1./N1.a_infinity) + N1r1.*log(N1r1./N1.r_infinity) + (1 - N1p1).*log((1 - N1p1)./(1-N1.a_infinity - N1.r_infinity)) ;
+%     eN2 = N2a1.*log(N2a1./N2.a_infinity) + N2r1.*log(N2r1./N2.r_infinity) + (1 - N2p1).*log((1 - N2p1)./(1-N2.a_infinity - N2.r_infinity)) ;
+%     Development_Entropy(i) = N1.dx*sum(eN1) + N2.dx*sum(eN2)  ...
+%         + N1.Lambda_som*log(N1.Lambda_som/N1.Lambda_som_infinity) ...
+%         + N1.Lambda_tip*log(N1.Lambda_tip/N1.Lambda_tip_infinity); ...
         %+ N2.Lambda_tip*log(N2.Lambda_tip/N2.Lambda_tip_infinity);
    
 end
