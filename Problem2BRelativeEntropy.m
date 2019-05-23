@@ -14,7 +14,7 @@ N1.typicalDiffusion = 10^(-1);
 N1.typicalInflux = 1;
 N1.typicalOutflux = 10^(-1);
 N1.typicalPotential = 1;
-N1.typicalConcentration = 15;
+N1.typicalConcentration = 682;
 
 % Calculate Scaling Parameters
 lambda_in = (N1.typicalTime*N1.typicalInflux)/(N1.typicalLength*N1.typicalConcentration);
@@ -47,15 +47,15 @@ N2.dt = dt;
 tt = linspace(0,T,ceil(T/N1.dt))';  
 
 % Load initial pool Cconcentrations and define their maximum sizes;
-N1.Lambda_som = 1.0;                        % Total Mass of Vesicles in the Soma
+N1.Lambda_som = 0.1;                        % Total Mass of Vesicles in the Soma
 N2.Lambda_som = N1.Lambda_som;
-N1.Lambda_tip = 0.002;                          % Total Mass of Vesicles in the growth cone of N1
-N2.Lambda_tip = 0.002;                          % Total Mass of Vesicles in the growth cone of N2
+N1.Lambda_tip = 0.0002;                          % Total Mass of Vesicles in the growth cone of N1
+N2.Lambda_tip = 0.0002;                          % Total Mass of Vesicles in the growth cone of N2
 
-N1.Lambda_som_max = 1.4;
+N1.Lambda_som_max = 0.175;
 N2.Lambda_som_max = N1.Lambda_som_max;
-N1.Lambda_tip_max = 0.02;               
-N2.Lambda_tip_max = 0.02;
+N1.Lambda_tip_max = 0.002;               
+N2.Lambda_tip_max = 0.002;
 
 SaveLambda_som = N1.Lambda_som; 
 SaveN1Lambda_tip = N1.Lambda_tip; 
@@ -86,10 +86,10 @@ N2.V_a = 1.75.*N2.x;
 N2.V_r = -1.5.*N2.x;
 
 % Initial concentration of a = ANT and r = RET
-N1.a0 = 0.*N1.x + 0.2;
-N1.r0 = 0.*N1.x + 0.22;
-N2.a0 = 0.*N2.x + 0.2;
-N2.r0 = 0.*N2.x + 0.22;
+N1.a0 = 0.*N1.x + 0.07;
+N1.r0 = 0.*N1.x + 0.072;
+N2.a0 = 0.*N2.x + 0.07;
+N2.r0 = 0.*N2.x + 0.072;
 
 SaveN1a0 = N1.a0; 
 SaveN1r0 = N1.r0; 
