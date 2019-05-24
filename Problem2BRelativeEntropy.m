@@ -14,7 +14,7 @@ N1.typicalDiffusion = 10^(-1);
 N1.typicalInflux = 1;
 N1.typicalOutflux = 10^(-1);
 N1.typicalPotential = 1;
-N1.typicalConcentration = 682;
+N1.typicalConcentration = 15;
 
 % Calculate Scaling Parameters
 lambda_in = (N1.typicalTime*N1.typicalInflux)/(N1.typicalLength*N1.typicalConcentration);
@@ -32,7 +32,7 @@ N2 = N1;
 % Space discretisation
 n = 400;
 N1.L = 1;
-N2.L = 0.3;
+N2.L = 0.9;
 N1.dx = 1/n;                                % or h
 N2.dx = 1/n;
 N1.x = linspace(0,N1.L,n*N1.L)';            
@@ -47,15 +47,15 @@ N2.dt = dt;
 tt = linspace(0,T,ceil(T/N1.dt))';  
 
 % Load initial pool Cconcentrations and define their maximum sizes;
-N1.Lambda_som = 0.1;                        % Total Mass of Vesicles in the Soma
+N1.Lambda_som = 0.12;                        % Total Mass of Vesicles in the Soma
 N2.Lambda_som = N1.Lambda_som;
-N1.Lambda_tip = 0.0002;                          % Total Mass of Vesicles in the growth cone of N1
-N2.Lambda_tip = 0.0002;                          % Total Mass of Vesicles in the growth cone of N2
+N1.Lambda_tip = 0.0015;                          % Total Mass of Vesicles in the growth cone of N1
+N2.Lambda_tip = 0.0015;                          % Total Mass of Vesicles in the growth cone of N2
 
 N1.Lambda_som_max = 0.175;
 N2.Lambda_som_max = N1.Lambda_som_max;
-N1.Lambda_tip_max = 0.002;               
-N2.Lambda_tip_max = 0.002;
+N1.Lambda_tip_max = 0.0029;               
+N2.Lambda_tip_max = 0.0029;
 
 SaveLambda_som = N1.Lambda_som; 
 SaveN1Lambda_tip = N1.Lambda_tip; 
@@ -86,10 +86,10 @@ N2.V_a = 1.75.*N2.x;
 N2.V_r = -1.5.*N2.x;
 
 % Initial concentration of a = ANT and r = RET
-N1.a0 = 0.*N1.x + 0.07;
-N1.r0 = 0.*N1.x + 0.072;
-N2.a0 = 0.*N2.x + 0.07;
-N2.r0 = 0.*N2.x + 0.072;
+N1.a0 = 0.*N1.x + 0.2;
+N1.r0 = 0.*N1.x + 0.2;
+N2.a0 = 0.*N2.x + 0.2;
+N2.r0 = 0.*N2.x + 0.2;
 
 SaveN1a0 = N1.a0; 
 SaveN1r0 = N1.r0; 
@@ -134,7 +134,7 @@ fig = figure('Position', [200, 100, 1200, 600]);     % for Inas Computer
   
 plotlefttip = subplot(1,5,1);
 hl = bar(N1.Lambda_tip, 'FaceColor', greyN);
-title('$\Lambda_{N1}$')
+%title('$\Lambda_{N1}$')
 ylim([0 N1.Lambda_tip_max ]);
 plotlefttip.PlotBoxAspectRatio(2) = 2.5;
 plotlefttip.Position(1) = 0.02;
@@ -187,7 +187,7 @@ set(gca,'FontSize',15,'FontWeight','bold','Fontangle','Oblique')
 
 plotrighttip = subplot(1,5,5);
 hr = bar(N2.Lambda_tip, 'FaceColor', greyN);
-title('$\Lambda_{N2}$')
+%title('$\Lambda_{N2}$')
 ylim([0 N2.Lambda_tip_max ]);
 plotrighttip.PlotBoxAspectRatio(2) = 2.5;
 plotrighttip.Position(1) = 0.7;
