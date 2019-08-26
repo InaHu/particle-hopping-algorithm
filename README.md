@@ -27,8 +27,8 @@ Authors:
 --------
 * Ina Humpert([ina.humpert@uni-muenster.de](mailto:ina.humpert@uni-muenster.de))
 * Jan-Frederik Pietschmann([(jfpietschmann@math.tu-
-chemnitz.de](mailto:(jfpietschmann@math.tu-
-chemnitz.de))
+chemnitz.de](mailto:jfpietschmann@math.tu-
+chemnitz.de)
 
 Acknowledgements:
 --------
