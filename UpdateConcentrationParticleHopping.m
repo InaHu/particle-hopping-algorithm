@@ -7,16 +7,17 @@ function [a1, r1] = UpdateConcentrationParticleHopping(N)
     % Initialise Additional Parameters for Scaling and Numerical Scheme
     C_a = 1/(2*N.eps_a);
     C_r = 1/(2*N.eps_r);
-    tildeC = 1/N.typicalDiffusion;
+    tildeC = 1/N.typicalDiffusion;              
     tildeV = N.typicalPotential;
     
     % Initialse Vectors for new Concentrations
     a1 = zeros(length(N.a0),1); 
     r1 = zeros(length(N.r0),1);
     
-    %% Solve in the Domain
-    H_a = 0.5*N.lambda_eps*(N.eps_a/(N.h.^2));          % Was macht die 0.5 hier? Skript sagt, dass da ne 2 stehen sollte
-    H_r = 0.5*N.lambda_eps*(N.eps_r/(N.h.^2));
+    %% Solve in the Domain 
+    % the parameter H and the function G are explained in the paper in Section 5
+    H_a = 2*N.lambda_eps*(N.eps_a/(N.h.^2));         
+    H_r = 2*N.lambda_eps*(N.eps_r/(N.h.^2));
     
     % Calculate new Concentrations
     G = - N.a0(2:end-1).*(1-N.p0(1:end-2)).*exp(- tildeC*tildeV*C_a*(N.V_a(2:end-1)-N.V_a(1:end-2)));          % Probability that an ANT-particle jumps away to the left

@@ -1,6 +1,9 @@
-% This program solves the time evolution of both vesicle transport and the
-% pool concentration with a particle hopping ansatz. The algorithm is
-% explained in more detail in the paper "On the Role of Vesicle Transport in Neurite Growth: Modelling and Experiments"
+% This program solves the time evolution of both vesicle transport and
+% pool concentration with a Particle-Hopping-Ansatz. The algorithm is
+% explained in more detail in the paper 
+% "On the Role of Vesicle Transport in Neurite Growth: Modelling and Experiments"
+% Please read the README-file that contains important information on how 
+% to handle this code.
 
 %% Load initial conditions
 close all   
@@ -10,8 +13,8 @@ clear variables
 NumberOfNeurites = 2;
 N1 = struct;     
 
-% Parameters for scaling
-N1.typicalTime = 100;
+% Typical values (all parameters that have a tilde in the paper, see Chapter 3.1 'Scaling')
+N1.typicalTime = 100;                   
 N1.typicalLength = 50;
 N1.typicalDiffusion = 10^(-1); 
 N1.typicalInflux = 1;
@@ -19,11 +22,12 @@ N1.typicalOutflux = 10^(-1);
 N1.typicalPotential = 1;
 N1.typicalConcentration = 15;
 
-% Calculate Scaling Parameters
+% Calculate Scaling Parameters (see Chapter 3.1 'Scaling')
+lambda_eps = N1.typicalTime*N1.typicalDiffusion/(2*N1.typicalLength^2);
+lambda_V = N1.typicalTime*N1.typicalPotential/(2*N1.typicalLength^2);
 lambda_in = (N1.typicalTime*N1.typicalInflux)/(2*N1.typicalLength*N1.typicalConcentration);       
 lambda_out = (N1.typicalTime*N1.typicalOutflux)/(2*N1.typicalLength);
-lambda_eps = N1.typicalTime*N1.typicalDiffusion/(N1.typicalLength^2);
-lambda_V = N1.typicalTime*N1.typicalPotential/(N1.typicalLength^2);
+
 N1.lambda_in = lambda_in;
 N1.lambda_out = lambda_out;
 N1.lambda_eps = lambda_eps;
@@ -35,21 +39,22 @@ N2 = N1;
 % Space discretisation
 n = 400;
 N1.L = 1;                                  % Length of Neurite 1
-N2.L = 0.3;
+%N2.L = 0.3;
+N2.L = 0.9;
 N1.h = 1/n;                                % Space step size                                
 N2.h = 1/n;
 N1.x = linspace(0,N1.L,n*N1.L)';           % Domain of Neurite 1            
 N2.x = linspace(0,N2.L,n*N2.L)';            
 
 % Time discretisation
-T = 100;                                   % End time
+T = 50;                                   % End time
 m = T*10000;
 tau = T/m;                                 % Time step size
 N1.tau = tau;   
 N2.tau = tau;                            
 tt = linspace(0,T,ceil(T/N1.tau))';  
 
-% Load initial pool Cconcentrations and define their maximum sizes;
+% Load initial pool Cconcentrations and define their maximum sizes (see Chapter 5.1);
 N1.Lambda_som = 0.12;                        % Total Mass of Vesicles in the Soma
 N2.Lambda_som = N1.Lambda_som;
 N1.Lambda_tip = 0.0015;                      % Total Mass of Vesicles in the growth cone of N1
@@ -64,7 +69,7 @@ SaveLambda_som = N1.Lambda_som;
 SaveN1Lambda_tip = N1.Lambda_tip; 
 SaveN2Lambda_tip = N2.Lambda_tip;
 
-% Initial influx- and outflux values in all neurites
+% Initial influx- and outflux values in all neurites (see Chapter 5.1)
 no_noflux_1 = 1;                          % Set to 0 to have no flux in neurite 1       
 no_noflux_2 = 1;                          % Set to 0 to have no flux in neurite 2
 N1.alpha_a = no_noflux_1*0.8;               
@@ -77,7 +82,7 @@ N1.beta_r = no_noflux_1*15;
 N2.beta_a = no_noflux_2*15;
 N2.beta_r = no_noflux_2*15;
 
-% Further parameters (diffusion constants and potentials)
+% Further parameters (diffusion constants and potentials) (see Chapter 5.1)
 N1.eps_a = 0.05;
 N2.eps_a = N1.eps_a;
 N1.eps_r = 0.05;
@@ -88,32 +93,26 @@ N1.V_r = -1.5.*N1.x;
 N2.V_a = 1.75.*N2.x;
 N2.V_r = -1.5.*N2.x;
 
-% Initial concentration of a = ANT and r = RET
+% Initial concentration of a = ANT and r = RET (see Chapter 5.1)
 N1.a0 = 0.*N1.x + 0.1;
 N1.r0 = 0.*N1.x + 0.1;
 N2.a0 = 0.*N2.x + 0.1;
 N2.r0 = 0.*N2.x + 0.1;
 
-SaveN1a0 = N1.a0; 
-SaveN1r0 = N1.r0; 
-SaveN2a0 = N2.a0;
-SaveN2r0 = N2.r0;
-
 % Initialise vectors that save development of different numbers
 Development_Lambda_som = zeros(m,1);
 Development_Lambda_tipN1 = zeros(m,1);
 Development_Lambda_tipN2 = zeros(m,1);
-Development_MassWholeSystem = zeros(m,1);
-Development_Entropy = zeros(m,1);
+Development_MassWholeSystem = zeros(m,1);     
 
 % Define Colors
 redN = [.8 .2941  .0862];
 greenN = [ .1647 .6313 .5960];
 greyN = [ 0.4 0.4 0.4];
 
-%% Check initial concentrations
+%% Check initial concentrations (non-negativity and density constraint)
 
-N1.p0 = N1.a0 + N1.r0;
+N1.p0 = N1.a0 + N1.r0;                  % total concentration in neurite 1
 N2.p0 = N2.a0 + N2.r0;
 
 if sum(N1.p0 > 1) + sum(N2.p0 > 1) > 0
@@ -132,8 +131,7 @@ TotalMass = N1.Lambda_som  + N1.Lambda_tip  +  N2.Lambda_tip  ...
 disp(['Total mass at the beginning is = ' num2str(TotalMass), '.']);
 
 %% Plot Initial Concentration in Both Neurites, Neurite 1 is plotted reverse
-%fig = figure('Position', [0, 0, 200, 200]);        % for Jans Computer
-fig = figure('Position', [200, 100, 1200, 600]);     % for Inas Computer
+fig = figure('Position', [200, 100, 1200, 600]);     
   
 plotlefttip = subplot(1,5,1);
 hl = bar(N1.Lambda_tip, 'FaceColor', greyN);
@@ -148,8 +146,8 @@ fs1 = subplot(1,5,2);
 h1 = plot(N1.x, N1.a0, N1.x, N1.r0, N1.x, 1-N1.a0-N1.r0 ,'k--','Linewidth',2);
 h1(1).Color = greenN;
 h1(2).Color = redN;
+fs1.Position = [0.1000    0.5000    0.3237    0.4150];
 
-% fs1.Position = [0.18000    0.5000    0.3237    0.4150];
 set(fs1, 'Xdir', 'reverse')
 title('Neurite 1')
 axis([0 N1.L 0 1]),
@@ -168,7 +166,6 @@ hs = bar(N1.Lambda_som, 'FaceColor', greyN);
 title('$\Lambda_{som}$')
 ylim([0 N1.Lambda_som_max]);
 plotsoma.PlotBoxAspectRatio(2) = 2.5;
-% plotsoma.Position(1) = 0.5;
 plotsoma.Position(1) = 0.36;
 plotsoma.Position(2) = 0.5;
 plotsoma.Position(4) = 0.4;
@@ -196,14 +193,11 @@ plotrighttip.Position(2) = 0.5;
 plotrighttip.Position(4) = 0.4;
 set(gca,'FontSize',15,'FontWeight','bold')
 
-fs1.Position = [0.1000    0.5000    0.3237    0.4150];
-
 drawnow;
+%exportFigure(['Images/TimeEvolution2B',num2str(0),'.pdf'], fig);          % command provided by helperFiles package, see README 
+%disp('The figure of the initial datum was printed.');
 
-exportFigure(['Images/TimeEvolution2B',num2str(0),'.pdf'], fig);           % command provided by helperFiles package
-disp('The figure of the initial datum was printed.');
-
-tic;
+tic
 
 %% Solve the equation
 z = 1;                                                                     % Counter for grafic enumeration
@@ -240,8 +234,8 @@ for i = 1:m
         
         disp(['Iteration: ', num2str(i)]);
         if (mod(i,10000)==0)
-            exportFigure(['Images/TimeEvolution2B',num2str(z),'.pdf'], fig);         % command provided by helperFiles package
-            disp(['A figure was printed at t = ',num2str(z), '.']);
+            %exportFigure(['Images/TimeEvolution2B',num2str(z),'.pdf'], fig);         % command provided by helperFiles package
+            %disp(['A figure was printed at t = ',num2str(z), '.']);
             z = z + 1;
         end
     end
@@ -251,7 +245,7 @@ for i = 1:m
     Development_Lambda_tipN1(i) = N1.Lambda_tip;
     Development_Lambda_tipN2(i) = N2.Lambda_tip;
     
-    % Update Concentration in Pools 
+    % Update Concentration in Pools (see Chapter 5)
     N1.Lambda_som = N1.Lambda_som ...                               % Old concentration
         + N1.tau*(lambda_out*N1.beta_r*(1 - N1.Lambda_som/N1.Lambda_som_max)*(N1old.r0(1)) ...      % Retrograte entering from Neuron 1
             + lambda_out*N2.beta_r*(1 - N2.Lambda_som/N2.Lambda_som_max)*(N2old.r0(1)) ...               % Retrograte entering from Neuron 2
@@ -266,7 +260,7 @@ for i = 1:m
         + N2.tau*(- lambda_in*N2.alpha_r*(N2.Lambda_tip/N2.Lambda_tip_max)*(1-N2old.r0(end)-N2old.a0(end)) ...                 % Vesicles exiting pool Neuron 2
             + lambda_out*N2.beta_a*N2old.a0(end)*(1 - N2.Lambda_tip/N2.Lambda_tip_max));  
 
-    % Calculate total mass
+    % Calculate total mass (the system is mass conserving, so the mass will not change)
     Development_MassWholeSystem(i) = N1.Lambda_som + N1.Lambda_tip + N2.Lambda_tip  ... 
         + N2.h*(sum(N1r1(:)) + sum(N1a1(:)) + sum(N2r1(:)) + sum(N2a1(:))); 
 end
@@ -308,8 +302,8 @@ xlim([0 T]);
 set(gca,'FontSize',12,'FontWeight','bold');
 
 resizeFigure(gcf, [270,850]);
-exportFigure('Images/DevelopmentPoolConcentration2B.pdf', gcf);                      % command provided by helperFiles package
-disp('A figure of the Development of the Concentration in the pools was printed.')
+%exportFigure('Images/DevelopmentPoolConcentration2B.pdf', gcf);                      % command provided by helperFiles package
+%disp('A figure of the Development of the Concentration in the pools was printed.')
 
 toc
 
