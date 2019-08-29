@@ -5,9 +5,11 @@ This 'Particle-Hopping-Algorithm' solves the PDE-system presented in the paper "
 It plots both the time evolution of anterograde and retrograde moving particles and the time evolution of the concentration in the pools.
 For an explaination see chapter 5 "Numerical Simulations" of the paper which explains the numerics in more detail.
 
+The major advantage of this algorithm compared to the classical upwind scheme is the fact that it can solve particle movement in systems with two different species of particles, see chapter 5 "Remark 5.2".
+
 It is advisible (but not nescessary) to use the helperFiles package provided by Janic Föcke (FAU Erlangen-Nürnberg) for a better visualization of the images provided by this code. 
 Without this toolbox the images might look very ugly when you try to print them. If you do not want to use this toolbox simply uncomment the lines that use the 'exportFigure'-commands.
-The helper-Files packages is free accessible under https://repo.mi.uni-erlangen.de/imaging/code/public/helperFiles (see its Read.me for explanation how to use it).
+The helper-Files packages is free accessible under https://repo.mi.uni-erlangen.de/imaging/code/public/helperFiles (see its README for explanation how to use it).
 
 
 Dependencies:
