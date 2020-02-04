@@ -24,14 +24,12 @@ N1.typicalConcentration = 15;
 
 % Calculate Scaling Parameters (see Chapter 3.1 'Scaling')
 lambda_eps = N1.typicalTime*N1.typicalDiffusion/(2*N1.typicalLength^2);
-lambda_V = N1.typicalTime*N1.typicalPotential/(2*N1.typicalLength^2);
 lambda_in = (N1.typicalTime*N1.typicalInflux)/(2*N1.typicalLength*N1.typicalConcentration);       
 lambda_out = (N1.typicalTime*N1.typicalOutflux)/(2*N1.typicalLength);
 
 N1.lambda_in = lambda_in;
 N1.lambda_out = lambda_out;
 N1.lambda_eps = lambda_eps;
-N1.lambda_V = lambda_V;
 
 % Second neurite hat the same scaling parameters
 N2 = N1;
@@ -39,15 +37,15 @@ N2 = N1;
 % Space discretisation
 n = 400;
 N1.L = 1;                                  % Length of Neurite 1
-%N2.L = 0.3;
-N2.L = 0.9;
+N2.L = 0.3;
+%N2.L = 0.9;
 N1.h = 1/n;                                % Space step size                                
 N2.h = 1/n;
 N1.x = linspace(0,N1.L,n*N1.L)';           % Domain of Neurite 1            
 N2.x = linspace(0,N2.L,n*N2.L)';            
 
 % Time discretisation
-T = 50;                                   % End time
+T = 150;                                   % End time
 m = T*10000;
 tau = T/m;                                 % Time step size
 N1.tau = tau;   
@@ -72,20 +70,20 @@ SaveN2Lambda_tip = N2.Lambda_tip;
 % Initial influx- and outflux values in all neurites (see Chapter 5.1)
 no_noflux_1 = 1;                          % Set to 0 to have no flux in neurite 1       
 no_noflux_2 = 1;                          % Set to 0 to have no flux in neurite 2
-N1.alpha_a = no_noflux_1*0.8;               
-N1.alpha_r = no_noflux_1*0.8;         
-N2.alpha_a = no_noflux_2*0.8;
-N2.alpha_r = no_noflux_2*0.8;
+N1.alpha_a = no_noflux_1*0.4;               
+N1.alpha_r = no_noflux_1*0.4;         
+N2.alpha_a = no_noflux_2*0.4;
+N2.alpha_r = no_noflux_2*0.4;
 
-N1.beta_a = no_noflux_1*15;
-N1.beta_r = no_noflux_1*15;
-N2.beta_a = no_noflux_2*15;
-N2.beta_r = no_noflux_2*15;
+N1.beta_a = no_noflux_1*25;
+N1.beta_r = no_noflux_1*25;
+N2.beta_a = no_noflux_2*25;
+N2.beta_r = no_noflux_2*25;
 
 % Further parameters (diffusion constants and potentials) (see Chapter 5.1)
-N1.eps_a = 0.05;
+N1.eps_a = 0.01;
 N2.eps_a = N1.eps_a;
-N1.eps_r = 0.05;
+N1.eps_r = 0.01;
 N2.eps_r = N1.eps_r;
 
 N1.V_a = 1.75.*N1.x;           
@@ -194,8 +192,8 @@ plotrighttip.Position(4) = 0.4;
 set(gca,'FontSize',15,'FontWeight','bold')
 
 drawnow;
-%exportFigure(['Images/TimeEvolution2B',num2str(0),'.pdf'], fig);          % command provided by helperFiles package, see README 
-%disp('The figure of the initial datum was printed.');
+exportFigure(['Images/TimeEvolution2B',num2str(0),'.pdf'], fig);          % command provided by helperFiles package, see README 
+disp('The figure of the initial datum was printed.');
 
 tic
 
@@ -289,6 +287,7 @@ title('$\Lambda_{N1}$');
 xlabel('Time $t$');
 ylabel('Concentration');
 xlim([0 T]);
+ylim([0.0012 0.002]);
 set(gca,'FontSize',12,'FontWeight','bold');
 
 subplot(1,3,3),
@@ -299,11 +298,12 @@ title('$\Lambda_{N2}$');
 xlabel('Time $t$');
 ylabel('Concentration');
 xlim([0 T]);
+ylim([0.0012 0.002]);
 set(gca,'FontSize',12,'FontWeight','bold');
 
 resizeFigure(gcf, [270,850]);
-%exportFigure('Images/DevelopmentPoolConcentration2B.pdf', gcf);                      % command provided by helperFiles package
-%disp('A figure of the Development of the Concentration in the pools was printed.')
+exportFigure('Images/DevelopmentPoolConcentration2B.pdf', gcf);                      % command provided by helperFiles package
+disp('A figure of the Development of the Concentration in the pools was printed.')
 
 toc
 
