@@ -45,7 +45,7 @@ N1.x = linspace(0,N1.L,n*N1.L)';           % Domain of Neurite 1
 N2.x = linspace(0,N2.L,n*N2.L)';            
 
 % Time discretisation
-T = 150;                                   % End time
+T = 15;                                   % End time
 m = T*10000;
 tau = T/m;                                 % Time step size
 N1.tau = tau;   
@@ -71,14 +71,14 @@ SaveN2Lambda_tip = N2.Lambda_tip;
 no_noflux_1 = 1;                          % Set to 0 to have no flux in neurite 1       
 no_noflux_2 = 1;                          % Set to 0 to have no flux in neurite 2
 N1.alpha_a = no_noflux_1*0.4;               
-N1.alpha_r = no_noflux_1*0.4;         
+N1.alpha_r = no_noflux_1*0.2;         
 N2.alpha_a = no_noflux_2*0.4;
-N2.alpha_r = no_noflux_2*0.4;
+N2.alpha_r = no_noflux_2*0.2;
 
-N1.beta_a = no_noflux_1*25;
-N1.beta_r = no_noflux_1*25;
-N2.beta_a = no_noflux_2*25;
-N2.beta_r = no_noflux_2*25;
+N1.beta_a = no_noflux_1*15;
+N1.beta_r = no_noflux_1*15;
+N2.beta_a = no_noflux_2*15;
+N2.beta_r = no_noflux_2*15;
 
 % Further parameters (diffusion constants and potentials) (see Chapter 5.1)
 N1.eps_a = 0.01;
@@ -247,8 +247,8 @@ for i = 1:m
     N1.Lambda_som = N1.Lambda_som ...                               % Old concentration
         + N1.tau*(lambda_out*N1.beta_r*(1 - N1.Lambda_som/N1.Lambda_som_max)*(N1old.r0(1)) ...      % Retrograte entering from Neuron 1
             + lambda_out*N2.beta_r*(1 - N2.Lambda_som/N2.Lambda_som_max)*(N2old.r0(1)) ...               % Retrograte entering from Neuron 2
-            - lambda_in*N1.alpha_a*(N1.Lambda_som/N1.Lambda_som_max)*(1-N1old.r0(1)-N1old.a0(1)) ...                          % Anterograde existing pool into Neuron 1 
-            - lambda_in*N2.alpha_a*(N2.Lambda_som/N2.Lambda_som_max)*(1-N2old.r0(1)-N2old.a0(1)));                     % Anterograde existing pool into Neuron 2
+            - lambda_in*N1.alpha_a*(N1old.r0(1)-N1old.a0(1))*(N1.Lambda_som/N1.Lambda_som_max)*(1-N1old.r0(1)-N1old.a0(1)) ...                          % Anterograde existing pool into Neuron 1 
+            - lambda_in*N2.alpha_a*(N2old.r0(1)-N2old.a0(1))*(N2.Lambda_som/N2.Lambda_som_max)*(1-N2old.r0(1)-N2old.a0(1)));                     % Anterograde existing pool into Neuron 2
             
     N2.Lambda_som = N1.Lambda_som;
     N1.Lambda_tip = N1.Lambda_tip ...                                           % Tip of Neuron 1
@@ -287,7 +287,7 @@ title('$\Lambda_{N1}$');
 xlabel('Time $t$');
 ylabel('Concentration');
 xlim([0 T]);
-ylim([0.0012 0.002]);
+ylim([0 0.002]);
 set(gca,'FontSize',12,'FontWeight','bold');
 
 subplot(1,3,3),
@@ -298,7 +298,7 @@ title('$\Lambda_{N2}$');
 xlabel('Time $t$');
 ylabel('Concentration');
 xlim([0 T]);
-ylim([0.0012 0.002]);
+ylim([0 0.002]);
 set(gca,'FontSize',12,'FontWeight','bold');
 
 resizeFigure(gcf, [270,850]);
